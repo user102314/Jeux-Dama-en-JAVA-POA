@@ -68,7 +68,7 @@ public class utilisateurControler {
                         // Ici vous pourriez ouvrir une nouvelle fenêtre principale
                     } else {
                         authFrame.showMessage("Mot de passe incorrect", "Erreur", JOptionPane.ERROR_MESSAGE);
-                        authFrame.getPasswordField.setText("");
+                        
                     }
                 } else {
                     authFrame.showMessage("Utilisateur introuvable", "Erreur", JOptionPane.ERROR_MESSAGE);
