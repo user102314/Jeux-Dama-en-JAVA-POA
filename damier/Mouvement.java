@@ -1,35 +1,40 @@
 package damier;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Mouvement {
-    public Case source;
-    public Case destination;
-    public Case capture;
-    public List<Case> capturesMultiples;
+
+
+
+class Mouvement {
+    Case source;
+    Case destination;
+    Case capture;  // La pièce capturée (null si pas de capture)
+    List<Case> capturesMultiples;  // Pour les rafles (captures multiples)
     
-    // Constructeur pour mouvement sans capture
-    public Mouvement(Case source, Case destination) {
-        this.source = source;
-        this.destination = destination;
-        this.capture = null;
-        this.capturesMultiples = null;
-    }
-    
-    // Constructeur pour capture simple
     public Mouvement(Case source, Case destination, Case capture) {
         this.source = source;
         this.destination = destination;
         this.capture = capture;
-        this.capturesMultiples = null;
+        this.capturesMultiples = new ArrayList<>();
+        if (capture != null) {
+            this.capturesMultiples.add(capture);
+        }
     }
     
-    // Constructeur pour captures multiples
-    public Mouvement(Case source, Case destination, List<Case> capturesMultiples) {
-        this.source = source;
-        this.destination = destination;
-        this.capturesMultiples = capturesMultiples;
-        this.capture = (capturesMultiples != null && !capturesMultiples.isEmpty()) ? 
-                       capturesMultiples.get(0) : null;
+    // Ajouter une capture à la liste
+    public void ajouterCapture(Case capture) {
+        if (capture != null && !capturesMultiples.contains(capture)) {
+            capturesMultiples.add(capture);
+        }
+    }
+    
+    // Fusionner avec un autre mouvement (pour les rafles)
+    public void fusionnerMouvement(Mouvement autre) {
+        if (autre != null && autre.capturesMultiples != null) {
+            for (Case c : autre.capturesMultiples) {
+                ajouterCapture(c);
+            }
+        }
     }
 }
