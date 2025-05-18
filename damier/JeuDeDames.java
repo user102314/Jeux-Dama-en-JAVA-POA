@@ -322,26 +322,57 @@ public class JeuDeDames extends JFrame {
     }
     
     // Traitement du clic
+ // 1. Modification de traiterClic pour gérer les captures multiples
     private void traiterClic(int ligne, int colonne) {
         Case casecliquee = plateau[ligne][colonne];
+        
+        // Trouver toutes les captures possibles pour le joueur
+        List<List<Mouvement>> capturesPossibles = trouverToutesCaptures(joueurActuel);
+        boolean captureObligatoire = !capturesPossibles.isEmpty();
         
         // Si une pièce est déjà sélectionnée
         if (caseSelectionnee != null) {
             // Vérifier si le clic est sur un mouvement possible
             for (Mouvement mouvement : mouvementsPossibles) {
                 if (mouvement.destination == casecliquee) {
+                    // Vérifier si le joueur doit prendre et si ce mouvement est une capture
+                    if (captureObligatoire && mouvement.capture == null) {
+                        statusBar.setText("La prise est obligatoire !");
+                        return;
+                    }
+                    
                     // Exécuter le mouvement
-                    executerMouvement(mouvement);
-                    caseSelectionnee = null;
-                    mouvementsPossibles.clear();
+                    boolean estCapture = mouvement.capture != null;
+                    executerMouvement(mouvement, false); // Ne pas changer de joueur automatiquement
                     
                     // Mettre à jour les scores après chaque mouvement
                     calculerScores();
                     
+                    // Vérifier les captures supplémentaires possibles avec la même pièce
+                    if (estCapture) {
+                        List<Mouvement> capturesSupplementaires = trouverMouvementsPossibles(casecliquee);
+                        capturesSupplementaires.removeIf(m -> m.capture == null);
+                        
+                        if (!capturesSupplementaires.isEmpty()) {
+                            // Il y a encore des captures possibles avec cette pièce
+                            caseSelectionnee = casecliquee;
+                            mouvementsPossibles = capturesSupplementaires;
+                            statusBar.setText("Continuez la prise!");
+                            repaint();
+                            return;
+                        }
+                    }
+                    
+                    // Fin du tour du joueur (pas de captures supplémentaires)
+                    caseSelectionnee = null;
+                    mouvementsPossibles.clear();
+                    
+                    // Changer de joueur
+                    joueurActuel = (joueurActuel == 1) ? 2 : 1;
+                    
                     // Vérifier si le jeu est terminé
                     if (verifierFinDeJeu()) {
                         jeuTermine = true;
-                        // Utiliser SwingUtilities.invokeLater pour éviter les problèmes de thread
                         SwingUtilities.invokeLater(() -> afficherEcranFinDePartie());
                     } else {
                         // Tour de l'ordinateur
@@ -371,14 +402,39 @@ public class JeuDeDames extends JFrame {
         // Sélectionner une pièce si c'est une pièce du joueur
         if (casecliquee.piece == joueurActuel) {
             caseSelectionnee = casecliquee;
-            mouvementsPossibles = trouverMouvementsPossibles(casecliquee);
+            
+            // Si prise obligatoire, ne montrer que les mouvements de capture
+            if (captureObligatoire) {
+                boolean peutCapturerAvecCettePiece = false;
+                
+                for (List<Mouvement> captures : capturesPossibles) {
+                    for (Mouvement m : captures) {
+                        if (m.source == casecliquee) {
+                            peutCapturerAvecCettePiece = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (peutCapturerAvecCettePiece) {
+                    mouvementsPossibles = trouverMouvementsPossibles(casecliquee);
+                    // Ne garder que les mouvements de capture
+                    mouvementsPossibles.removeIf(m -> m.capture == null);
+                } else {
+                    statusBar.setText("Vous devez prendre avec une autre pièce !");
+                    caseSelectionnee = null;
+                    mouvementsPossibles = new ArrayList<>();
+                }
+            } else {
+                mouvementsPossibles = trouverMouvementsPossibles(casecliquee);
+            }
         }
         
         repaint();
     }
-    
-    // Exécuter un mouvement
-    private void executerMouvement(Mouvement mouvement) {
+
+    // 2. Modification de executerMouvement pour gérer le changement de tour optionnel
+    private void executerMouvement(Mouvement mouvement, boolean changerJoueur) {
         Case source = mouvement.source;
         Case destination = mouvement.destination;
         
@@ -388,10 +444,12 @@ public class JeuDeDames extends JFrame {
         source.piece = 0;
         source.estDame = false;
         
-        // Supprimer les pièces capturées
-        if (mouvement.capture != null) {
-            mouvement.capture.piece = 0;
-            mouvement.capture.estDame = false;
+        // Supprimer toutes les pièces capturées
+        if (mouvement.capturesMultiples != null && !mouvement.capturesMultiples.isEmpty()) {
+            for (Case capture : mouvement.capturesMultiples) {
+                capture.piece = 0;
+                capture.estDame = false;
+            }
         }
         
         // Promotion en dame
@@ -400,51 +458,107 @@ public class JeuDeDames extends JFrame {
             destination.estDame = true;
         }
         
-        // Changer de joueur
-        joueurActuel = (joueurActuel == 1) ? 2 : 1;
+        // Changer de joueur uniquement si demandé
+        if (changerJoueur) {
+            joueurActuel = (joueurActuel == 1) ? 2 : 1;
+        }
     }
-    
-    // Tour de l'ordinateur
+
+    // 3. Modification de tourOrdinateur pour gérer les captures multiples
     private void tourOrdinateur() {
         if (jeuTermine) return;
         
-        // Trouver tous les mouvements possibles pour l'ordinateur
-        List<Mouvement> tousLesMouvements = new ArrayList<>();
-        List<Mouvement> mouvementsDeCapture = new ArrayList<>();
+        boolean continuerTour = true;
+        Case positionActuelle = null;
         
-        for (int ligne = 0; ligne < TAILLE; ligne++) {
-            for (int colonne = 0; colonne < TAILLE; colonne++) {
-                Case caseActuelle = plateau[ligne][colonne];
-                if (caseActuelle.piece == joueurActuel) {
-                    List<Mouvement> mouvements = trouverMouvementsPossibles(caseActuelle);
-                    tousLesMouvements.addAll(mouvements);
-                    
-                    // Séparer les mouvements de capture
-                    for (Mouvement m : mouvements) {
-                        if (m.capture != null) {
-                            mouvementsDeCapture.add(m);
+        while (continuerTour) {
+            continuerTour = false;
+            
+            // Trouver toutes les captures possibles pour l'ordinateur
+            List<List<Mouvement>> toutesCaptures = new ArrayList<>();
+            
+            if (positionActuelle == null) {
+                // Premier mouvement du tour : trouver toutes les captures possibles
+                toutesCaptures = trouverToutesCaptures(joueurActuel);
+            } else {
+                // Suite d'une capture : ne chercher que les captures depuis la position actuelle
+                List<Mouvement> capturesSuivantes = trouverMouvementsPossibles(positionActuelle);
+                capturesSuivantes.removeIf(m -> m.capture == null);
+                if (!capturesSuivantes.isEmpty()) {
+                    toutesCaptures.add(capturesSuivantes);
+                }
+            }
+            
+            // Si des captures sont possibles
+            if (!toutesCaptures.isEmpty()) {
+                // Déterminer la séquence avec le plus de captures
+                int maxCaptures = 0;
+                List<Mouvement> meilleureSequence = null;
+                
+                for (List<Mouvement> sequence : toutesCaptures) {
+                    if (!sequence.isEmpty()) {
+                        int captures = calculerNombreCaptures(sequence.get(0));
+                        if (captures > maxCaptures) {
+                            maxCaptures = captures;
+                            meilleureSequence = sequence;
                         }
                     }
+                }
+                
+                // Choisir une capture de la meilleure séquence
+                if (meilleureSequence != null && !meilleureSequence.isEmpty()) {
+                    int index = (int)(Math.random() * meilleureSequence.size());
+                    Mouvement meilleurMouvement = meilleureSequence.get(index);
+                    
+                    // Exécuter le mouvement sans changer de joueur
+                    executerMouvement(meilleurMouvement, false);
+                    
+                    // Mettre à jour la position actuelle
+                    positionActuelle = meilleurMouvement.destination;
+                    
+                    // Vérifier s'il y a des captures supplémentaires possibles
+                    List<Mouvement> capturesSuivantes = trouverMouvementsPossibles(positionActuelle);
+                    capturesSuivantes.removeIf(m -> m.capture == null);
+                    
+                    if (!capturesSuivantes.isEmpty()) {
+                        continuerTour = true;
+                        repaint();
+                        try {
+                            Thread.sleep(500); // Pause courte entre les captures
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } else if (positionActuelle == null) {
+                // Pas de capture possible et premier mouvement : faire un mouvement normal
+                List<Mouvement> mouvementsNormaux = new ArrayList<>();
+                
+                for (int ligne = 0; ligne < TAILLE; ligne++) {
+                    for (int colonne = 0; colonne < TAILLE; colonne++) {
+                        Case caseActuelle = plateau[ligne][colonne];
+                        if (caseActuelle.piece == joueurActuel) {
+                            List<Mouvement> mouvements = trouverMouvementsPossibles(caseActuelle);
+                            mouvementsNormaux.addAll(mouvements);
+                        }
+                    }
+                }
+                
+                if (!mouvementsNormaux.isEmpty()) {
+                    int index = (int)(Math.random() * mouvementsNormaux.size());
+                    executerMouvement(mouvementsNormaux.get(index), false);
+                } else {
+                    // L'ordinateur ne peut pas jouer
+                    jeuTermine = true;
+                    SwingUtilities.invokeLater(() -> afficherEcranFinDePartie());
+                    repaint();
+                    return;
                 }
             }
         }
         
-        // Choisir un mouvement (priorité aux captures)
-        if (!mouvementsDeCapture.isEmpty()) {
-            // Choisir une capture aléatoire
-            int index = (int)(Math.random() * mouvementsDeCapture.size());
-            executerMouvement(mouvementsDeCapture.get(index));
-        } else if (!tousLesMouvements.isEmpty()) {
-            // Choisir un mouvement aléatoire
-            int index = (int)(Math.random() * tousLesMouvements.size());
-            executerMouvement(tousLesMouvements.get(index));
-        } else {
-            // L'ordinateur ne peut pas jouer
-            jeuTermine = true;
-            SwingUtilities.invokeLater(() -> afficherEcranFinDePartie());
-            repaint();
-            return;
-        }
+        // Fin du tour de l'ordinateur
+        joueurActuel = 1; // Passer au joueur humain
         
         // Mettre à jour les scores après le mouvement de l'ordinateur  
         calculerScores();
@@ -459,10 +573,12 @@ public class JeuDeDames extends JFrame {
         
         repaint();
     }
-    
-    // Trouver les mouvements possibles pour une pièce
+
+
+
     private List<Mouvement> trouverMouvementsPossibles(Case source) {
         List<Mouvement> mouvements = new ArrayList<>();
+        List<Mouvement> captures = new ArrayList<>();
         int joueur = source.piece;
         
         if (joueur == 0) return mouvements;  // Case vide
@@ -476,8 +592,6 @@ public class JeuDeDames extends JFrame {
         } else {
             directions = new int[]{1};   // Ordinateur: vers le bas
         }
-        
-        boolean capturePossible = false;
         
         // Vérifier les captures d'abord
         for (int dirLigne : directions) {
@@ -494,14 +608,19 @@ public class JeuDeDames extends JFrame {
                         if (caseIntermediaire.piece == 0) continue;  // Case vide, continuer
                         
                         if (caseIntermediaire.piece != joueur) {  // Pièce adverse
-                            int ligneSaut = nouvelleLigne + dirLigne;
-                            int colonneSaut = nouvelleColonne + dirColonne;
-                            
-                            if (estDansPlateau(ligneSaut, colonneSaut) && 
-                                plateau[ligneSaut][colonneSaut].piece == 0) {
-                                // Capture possible
-                                mouvements.add(new Mouvement(source, plateau[ligneSaut][colonneSaut], caseIntermediaire));
-                                capturePossible = true;
+                            // Chercher une case libre après la pièce adverse
+                            for (int sautDistance = 1; sautDistance < TAILLE; sautDistance++) {
+                                int ligneSaut = nouvelleLigne + dirLigne * sautDistance;
+                                int colonneSaut = nouvelleColonne + dirColonne * sautDistance;
+                                
+                                if (!estDansPlateau(ligneSaut, colonneSaut)) break;
+                                
+                                if (plateau[ligneSaut][colonneSaut].piece == 0) {
+                                    // Capture possible
+                                    captures.add(new Mouvement(source, plateau[ligneSaut][colonneSaut], caseIntermediaire));
+                                } else {
+                                    break; // Une pièce bloque le chemin
+                                }
                             }
                         }
                         
@@ -522,8 +641,7 @@ public class JeuDeDames extends JFrame {
                             if (estDansPlateau(ligneSaut, colonneSaut) && 
                                 plateau[ligneSaut][colonneSaut].piece == 0) {
                                 // Capture possible
-                                mouvements.add(new Mouvement(source, plateau[ligneSaut][colonneSaut], caseVoisine));
-                                capturePossible = true;
+                                captures.add(new Mouvement(source, plateau[ligneSaut][colonneSaut], caseVoisine));
                             }
                         }
                     }
@@ -532,9 +650,9 @@ public class JeuDeDames extends JFrame {
         }
         
         // Si des captures sont possibles, ignorer les déplacements simples
-        if (capturePossible) return mouvements;
+        if (!captures.isEmpty()) return captures;
         
-        // Déplacements simples
+        // Déplacements simples (seulement si aucune capture n'est possible)
         for (int dirLigne : directions) {
             for (int dirColonne : new int[]{-1, 1}) {
                 if (source.estDame) {
@@ -569,7 +687,73 @@ public class JeuDeDames extends JFrame {
         
         return mouvements;
     }
+    private List<List<Mouvement>> trouverToutesCaptures(int joueur) {
+        List<List<Mouvement>> toutesCaptures = new ArrayList<>();
+        
+        // Trouver les pièces du joueur actuel qui peuvent capturer
+        for (int ligne = 0; ligne < TAILLE; ligne++) {
+            for (int colonne = 0; colonne < TAILLE; colonne++) {
+                Case caseActuelle = plateau[ligne][colonne];
+                if (caseActuelle.piece == joueur) {
+                    List<Mouvement> captures = trouverMouvementsPossibles(caseActuelle);
+                    // Ne garder que les mouvements de capture
+                    captures.removeIf(m -> m.capture == null);
+                    
+                    if (!captures.isEmpty()) {
+                        toutesCaptures.add(captures);
+                    }
+                }
+            }
+        }
+        
+        return toutesCaptures;
+    }
+
+private int calculerNombreCaptures(Mouvement mouvement) {
+    // Si pas de capture, retourne 0
+    if (mouvement.capture == null) return 0;
     
+    // Simulation du mouvement pour calculer les captures suivantes
+    Case source = mouvement.source;
+    Case destination = mouvement.destination;
+    Case capture = mouvement.capture;
+    
+    // Sauvegarder l'état avant la simulation
+    int pieceCaptureOriginal = capture.piece;
+    boolean estDameCaptureOriginal = capture.estDame;
+    int pieceSourceOriginal = source.piece;
+    boolean estDameSourceOriginal = source.estDame;
+    
+    // Simuler le mouvement
+    destination.piece = source.piece;
+    destination.estDame = source.estDame;
+    source.piece = 0;
+    source.estDame = false;
+    capture.piece = 0;
+    capture.estDame = false;
+    
+    // Calculer les captures possibles à partir de la nouvelle position
+    List<Mouvement> capturesSuivantes = trouverMouvementsPossibles(destination);
+    capturesSuivantes.removeIf(m -> m.capture == null);
+    
+    int maxCaptures = 1; // Déjà une capture avec ce mouvement
+    
+    // Trouver le maximum de captures possibles
+    for (Mouvement m : capturesSuivantes) {
+        int captures = 1 + calculerNombreCaptures(m);
+        maxCaptures = Math.max(maxCaptures, captures);
+    }
+    
+    // Restaurer l'état original
+    capture.piece = pieceCaptureOriginal;
+    capture.estDame = estDameCaptureOriginal;
+    source.piece = pieceSourceOriginal;
+    source.estDame = estDameSourceOriginal;
+    destination.piece = 0;  
+    destination.estDame = false;
+    
+    return maxCaptures;
+}
     // Vérifier si la position est dans le plateau
     private boolean estDansPlateau(int ligne, int colonne) {
         return ligne >= 0 && ligne < TAILLE && colonne >= 0 && colonne < TAILLE;
@@ -608,19 +792,39 @@ public class JeuDeDames extends JFrame {
         }
     }
     
-    // Classe représentant un mouvement
-    private class Mouvement {
-        Case source;
-        Case destination;
-        Case capture;  // La pièce capturée (null si pas de capture)
-        
-        public Mouvement(Case source, Case destination, Case capture) {
-            this.source = source;
-            this.destination = destination;
-            this.capture = capture;
+
+private class Mouvement {
+    Case source;
+    Case destination;
+    Case capture;  // La pièce capturée (null si pas de capture)
+    List<Case> capturesMultiples;  // Pour les rafles (captures multiples)
+    
+    public Mouvement(Case source, Case destination, Case capture) {
+        this.source = source;
+        this.destination = destination;
+        this.capture = capture;
+        this.capturesMultiples = new ArrayList<>();
+        if (capture != null) {
+            this.capturesMultiples.add(capture);
         }
     }
     
+    // Ajouter une capture à la liste
+    public void ajouterCapture(Case capture) {
+        if (capture != null && !capturesMultiples.contains(capture)) {
+            capturesMultiples.add(capture);
+        }
+    }
+    
+    // Fusionner avec un autre mouvement (pour les rafles)
+    public void fusionnerMouvement(Mouvement autre) {
+        if (autre != null && autre.capturesMultiples != null) {
+            for (Case c : autre.capturesMultiples) {
+                ajouterCapture(c);
+            }
+        }
+    }
+}
     // Point d'entrée du programme
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
