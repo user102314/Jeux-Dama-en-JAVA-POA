@@ -5,8 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import damier.Mouvement;
-import damier.Case;
+
 public class JeuDeDames extends JFrame {
     
     private static final int TAILLE = 10;  // Taille du plateau (10x10)
@@ -546,7 +545,6 @@ public class JeuDeDames extends JFrame {
         repaint();
     }
 
-
     private List<Mouvement> trouverMouvementsPossibles(Case source) {
         List<Mouvement> mouvements = new ArrayList<>();
         List<Mouvement> captures = new ArrayList<>();
@@ -749,10 +747,10 @@ private int calculerNombreCaptures(Mouvement mouvement) {
         return true;  // Une des deux joueurs n'a plus de pièces
     }
     
-    // Classe représentant une case du plateau
 
+    
 
-// Point d'entrée du programme
+    // Point d'entrée du programme
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JeuDeDames jeu = new JeuDeDames();
@@ -760,6 +758,3 @@ private int calculerNombreCaptures(Mouvement mouvement) {
         });
     }
 }
-
-
-
