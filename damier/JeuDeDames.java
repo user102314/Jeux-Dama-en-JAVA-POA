@@ -5,7 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import damier.Mouvement;
+import damier.Case;
 public class JeuDeDames extends JFrame {
     
     private static final int TAILLE = 10;  // Taille du plateau (10x10)
@@ -749,53 +750,9 @@ private int calculerNombreCaptures(Mouvement mouvement) {
     }
     
     // Classe représentant une case du plateau
-    private class Case {
-        int ligne, colonne;
-        int piece;  // 0 = vide, 1 = joueur, 2 = ordinateur
-        boolean estDame;
-        
-        public Case(int ligne, int colonne) {
-            this.ligne = ligne;
-            this.colonne = colonne;
-            this.piece = 0;
-            this.estDame = false;
-        }
-    }
-    
 
-private class Mouvement {
-    Case source;
-    Case destination;
-    Case capture;  // La pièce capturée (null si pas de capture)
-    List<Case> capturesMultiples;  // Pour les rafles (captures multiples)
-    
-    public Mouvement(Case source, Case destination, Case capture) {
-        this.source = source;
-        this.destination = destination;
-        this.capture = capture;
-        this.capturesMultiples = new ArrayList<>();
-        if (capture != null) {
-            this.capturesMultiples.add(capture);
-        }
-    }
-    
-    // Ajouter une capture à la liste
-    public void ajouterCapture(Case capture) {
-        if (capture != null && !capturesMultiples.contains(capture)) {
-            capturesMultiples.add(capture);
-        }
-    }
-    
-    // Fusionner avec un autre mouvement (pour les rafles)
-    public void fusionnerMouvement(Mouvement autre) {
-        if (autre != null && autre.capturesMultiples != null) {
-            for (Case c : autre.capturesMultiples) {
-                ajouterCapture(c);
-            }
-        }
-    }
-}
-    // Point d'entrée du programme
+
+// Point d'entrée du programme
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JeuDeDames jeu = new JeuDeDames();
