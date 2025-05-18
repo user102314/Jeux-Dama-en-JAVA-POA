@@ -322,16 +322,20 @@ public class JeuDeDames extends JFrame {
     }
     
     // Traitement du clic
- // Version modifiée de traiterClic pour rendre les captures optionnelles, non obligatoires
+ // 1. Modification de traiterClic pour gérer les captures multiples
     private void traiterClic(int ligne, int colonne) {
         Case casecliquee = plateau[ligne][colonne];
+        
+        // Trouver toutes les captures possibles pour le joueur
+        List<List<Mouvement>> capturesPossibles = trouverToutesCaptures(joueurActuel);
+        boolean captureObligatoire = !capturesPossibles.isEmpty();
         
         // Si une pièce est déjà sélectionnée
         if (caseSelectionnee != null) {
             // Vérifier si le clic est sur un mouvement possible
             for (Mouvement mouvement : mouvementsPossibles) {
                 if (mouvement.destination == casecliquee) {
-                    // Exécuter le mouvement - plus besoin de vérifier si c'est une capture obligatoire
+                    // Vérifier si le mouvement est valide
                     boolean estCapture = mouvement.capture != null;
                     executerMouvement(mouvement, false); // Ne pas changer de joueur automatiquement
                     
@@ -347,7 +351,7 @@ public class JeuDeDames extends JFrame {
                             // Il y a encore des captures possibles avec cette pièce
                             caseSelectionnee = casecliquee;
                             mouvementsPossibles = capturesSupplementaires;
-                            statusBar.setText("Vous pouvez continuer la prise ou passer votre tour");
+                            statusBar.setText("Continuez la prise!");
                             repaint();
                             return;
                         }
@@ -392,7 +396,8 @@ public class JeuDeDames extends JFrame {
         // Sélectionner une pièce si c'est une pièce du joueur
         if (casecliquee.piece == joueurActuel) {
             caseSelectionnee = casecliquee;
-            // Simplement montrer tous les mouvements possibles, sans filtrer les captures obligatoires
+            
+            // Montrer tous les mouvements possibles pour cette pièce
             mouvementsPossibles = trouverMouvementsPossibles(casecliquee);
         }
         
@@ -539,7 +544,6 @@ public class JeuDeDames extends JFrame {
         
         repaint();
     }
-
 
 
     private List<Mouvement> trouverMouvementsPossibles(Case source) {
@@ -745,10 +749,52 @@ private int calculerNombreCaptures(Mouvement mouvement) {
     }
     
     // Classe représentant une case du plateau
-
+    private class Case {
+        int ligne, colonne;
+        int piece;  // 0 = vide, 1 = joueur, 2 = ordinateur
+        boolean estDame;
+        
+        public Case(int ligne, int colonne) {
+            this.ligne = ligne;
+            this.colonne = colonne;
+            this.piece = 0;
+            this.estDame = false;
+        }
+    }
     
 
-
+private class Mouvement {
+    Case source;
+    Case destination;
+    Case capture;  // La pièce capturée (null si pas de capture)
+    List<Case> capturesMultiples;  // Pour les rafles (captures multiples)
+    
+    public Mouvement(Case source, Case destination, Case capture) {
+        this.source = source;
+        this.destination = destination;
+        this.capture = capture;
+        this.capturesMultiples = new ArrayList<>();
+        if (capture != null) {
+            this.capturesMultiples.add(capture);
+        }
+    }
+    
+    // Ajouter une capture à la liste
+    public void ajouterCapture(Case capture) {
+        if (capture != null && !capturesMultiples.contains(capture)) {
+            capturesMultiples.add(capture);
+        }
+    }
+    
+    // Fusionner avec un autre mouvement (pour les rafles)
+    public void fusionnerMouvement(Mouvement autre) {
+        if (autre != null && autre.capturesMultiples != null) {
+            for (Case c : autre.capturesMultiples) {
+                ajouterCapture(c);
+            }
+        }
+    }
+}
     // Point d'entrée du programme
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
