@@ -3,7 +3,7 @@ package damier;
 public class Case {
     public int ligne;
     public int colonne;
-    public int piece;  // 0 = vide, 1 = joueur, 2 = ordinateur
+    public int piece; // 0 = vide, 1 = joueur, 2 = ordinateur
     public boolean estDame;
     
     public Case(int ligne, int colonne) {
@@ -12,7 +12,6 @@ public class Case {
         this.piece = 0;
         this.estDame = false;
     }
-    public boolean estCaseNoire() {
-        return (ligne + colonne) % 2 == 1;
-    }
 }
+
+
