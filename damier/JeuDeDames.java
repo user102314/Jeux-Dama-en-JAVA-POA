@@ -322,26 +322,16 @@ public class JeuDeDames extends JFrame {
     }
     
     // Traitement du clic
- // 1. Modification de traiterClic pour gérer les captures multiples
+ // Version modifiée de traiterClic pour rendre les captures optionnelles, non obligatoires
     private void traiterClic(int ligne, int colonne) {
         Case casecliquee = plateau[ligne][colonne];
-        
-        // Trouver toutes les captures possibles pour le joueur
-        List<List<Mouvement>> capturesPossibles = trouverToutesCaptures(joueurActuel);
-        boolean captureObligatoire = !capturesPossibles.isEmpty();
         
         // Si une pièce est déjà sélectionnée
         if (caseSelectionnee != null) {
             // Vérifier si le clic est sur un mouvement possible
             for (Mouvement mouvement : mouvementsPossibles) {
                 if (mouvement.destination == casecliquee) {
-                    // Vérifier si le joueur doit prendre et si ce mouvement est une capture
-                    if (captureObligatoire && mouvement.capture == null) {
-                        statusBar.setText("La prise est obligatoire !");
-                        return;
-                    }
-                    
-                    // Exécuter le mouvement
+                    // Exécuter le mouvement - plus besoin de vérifier si c'est une capture obligatoire
                     boolean estCapture = mouvement.capture != null;
                     executerMouvement(mouvement, false); // Ne pas changer de joueur automatiquement
                     
@@ -357,7 +347,7 @@ public class JeuDeDames extends JFrame {
                             // Il y a encore des captures possibles avec cette pièce
                             caseSelectionnee = casecliquee;
                             mouvementsPossibles = capturesSupplementaires;
-                            statusBar.setText("Continuez la prise!");
+                            statusBar.setText("Vous pouvez continuer la prise ou passer votre tour");
                             repaint();
                             return;
                         }
@@ -402,32 +392,8 @@ public class JeuDeDames extends JFrame {
         // Sélectionner une pièce si c'est une pièce du joueur
         if (casecliquee.piece == joueurActuel) {
             caseSelectionnee = casecliquee;
-            
-            // Si prise obligatoire, ne montrer que les mouvements de capture
-            if (captureObligatoire) {
-                boolean peutCapturerAvecCettePiece = false;
-                
-                for (List<Mouvement> captures : capturesPossibles) {
-                    for (Mouvement m : captures) {
-                        if (m.source == casecliquee) {
-                            peutCapturerAvecCettePiece = true;
-                            break;
-                        }
-                    }
-                }
-                
-                if (peutCapturerAvecCettePiece) {
-                    mouvementsPossibles = trouverMouvementsPossibles(casecliquee);
-                    // Ne garder que les mouvements de capture
-                    mouvementsPossibles.removeIf(m -> m.capture == null);
-                } else {
-                    statusBar.setText("Vous devez prendre avec une autre pièce !");
-                    caseSelectionnee = null;
-                    mouvementsPossibles = new ArrayList<>();
-                }
-            } else {
-                mouvementsPossibles = trouverMouvementsPossibles(casecliquee);
-            }
+            // Simplement montrer tous les mouvements possibles, sans filtrer les captures obligatoires
+            mouvementsPossibles = trouverMouvementsPossibles(casecliquee);
         }
         
         repaint();
@@ -779,52 +745,10 @@ private int calculerNombreCaptures(Mouvement mouvement) {
     }
     
     // Classe représentant une case du plateau
-    private class Case {
-        int ligne, colonne;
-        int piece;  // 0 = vide, 1 = joueur, 2 = ordinateur
-        boolean estDame;
-        
-        public Case(int ligne, int colonne) {
-            this.ligne = ligne;
-            this.colonne = colonne;
-            this.piece = 0;
-            this.estDame = false;
-        }
-    }
+
     
 
-private class Mouvement {
-    Case source;
-    Case destination;
-    Case capture;  // La pièce capturée (null si pas de capture)
-    List<Case> capturesMultiples;  // Pour les rafles (captures multiples)
-    
-    public Mouvement(Case source, Case destination, Case capture) {
-        this.source = source;
-        this.destination = destination;
-        this.capture = capture;
-        this.capturesMultiples = new ArrayList<>();
-        if (capture != null) {
-            this.capturesMultiples.add(capture);
-        }
-    }
-    
-    // Ajouter une capture à la liste
-    public void ajouterCapture(Case capture) {
-        if (capture != null && !capturesMultiples.contains(capture)) {
-            capturesMultiples.add(capture);
-        }
-    }
-    
-    // Fusionner avec un autre mouvement (pour les rafles)
-    public void fusionnerMouvement(Mouvement autre) {
-        if (autre != null && autre.capturesMultiples != null) {
-            for (Case c : autre.capturesMultiples) {
-                ajouterCapture(c);
-            }
-        }
-    }
-}
+
     // Point d'entrée du programme
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
