@@ -49,4 +49,22 @@ public class utilisateurDAO {
             return false;
         }
     }
+    public boolean updateUser(String email, String newMdp, String newNom, String newPrenom) {
+        try {
+            Connection conn = db.getConnection();
+            String query = "UPDATE utilisateur SET mdp = ?, nom = ?, prenom = ? WHERE email = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, newMdp);
+            stmt.setString(2, newNom);
+            stmt.setString(3, newPrenom);
+            stmt.setString(4, email);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
