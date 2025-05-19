@@ -3,6 +3,7 @@ package controler;
 import model.utilisateurDAO;
 import vue.AuthFrame;
 import vue.InscriFrame;
+import vue.MainView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -11,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class utilisateurControler {
-
+	
     private final AuthFrame authFrame;
     private final InscriFrame inscriFrame;
     private final utilisateurDAO utilisateurDao;
@@ -42,10 +43,10 @@ public class utilisateurControler {
         authFrame.setVisible(false);
         inscriFrame.setVisible(true);
         // Réinitialisation des champs
-        inscriFrame.getEmailField().setText("");
-        inscriFrame.getPasswordField().setText("");
-        inscriFrame.getNomField().setText("");
-        inscriFrame.getPrenomField().setText("");
+        inscriFrame.setEmail("");
+        inscriFrame.setPassword("");
+        inscriFrame.setNom("");
+        inscriFrame.setPrenom("");
     }
 
     private class LoginListener implements ActionListener {
@@ -65,10 +66,19 @@ public class utilisateurControler {
                     String storedPassword = user.getString("mdp");
                     if (storedPassword.equals(password)) {
                         authFrame.showMessage("Connexion réussie", "Succès", JOptionPane.INFORMATION_MESSAGE);
-                        // Ici vous pourriez ouvrir une nouvelle fenêtre principale
+                        
+                        // Fermer la fenêtre d'authentification
+                        authFrame.dispose();
+                        
+                        // Lancer la MainView dans l'EDT (Event Dispatch Thread)
+                        SwingUtilities.invokeLater(() -> {
+                            MainView mainView = new MainView();
+                            new MainController(mainView, email); // Associer le contrôleur
+                            mainView.setVisible(true);
+                        });
+                        
                     } else {
                         authFrame.showMessage("Mot de passe incorrect", "Erreur", JOptionPane.ERROR_MESSAGE);
-                        
                     }
                 } else {
                     authFrame.showMessage("Utilisateur introuvable", "Erreur", JOptionPane.ERROR_MESSAGE);
