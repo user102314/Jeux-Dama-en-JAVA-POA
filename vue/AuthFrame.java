@@ -6,9 +6,17 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
+/**
+ * Classe AuthFrame améliorée pour l'interface d'authentification
+ * Thème adapté au jeu de dames avec les couleurs du plateau de jeu
+ */
 public class AuthFrame extends JFrame {
-    public static final String getPasswordField = null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
     private JTextField emailField;
     private JPasswordField passwordField;
@@ -19,60 +27,72 @@ public class AuthFrame extends JFrame {
     private JButton btnQuitter;
     private JPanel headerPanel;
     private JLabel logoLabel;
+    private JLabel gameIconLabel;
+
+    // Constantes pour les couleurs du jeu de dames
+    private static final Color DARK_SQUARE = new Color(45, 45, 45);
+    private static final Color LIGHT_SQUARE = new Color(240, 240, 240);
+    private static final Color RED_PIECE = new Color(220, 0, 0);
+    private static final Color GRAY_PIECE = new Color(150, 150, 150);
+    private static final Color GOLD_ACCENT = new Color(255, 215, 0);
 
     public AuthFrame() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 600, 400);
-        setTitle("Authentification");
-        setLocationRelativeTo(null); // Centrer la fenêtre
+        setBounds(100, 100, 600, 500);
+        setTitle("Jeu de Dames - Authentification");
+        setLocationRelativeTo(null);
+        setIconImage(createCheckerIcon().getImage());
         
-        // Création d'un panel avec un fond dégradé
-        contentPane = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                Color color1 = new Color(50, 50, 50); // Noir foncé
-                Color color2 = new Color(100, 100, 100); // Gris foncé
-                int w = getWidth();
-                int h = getHeight();
-                GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
-                g2d.setPaint(gp);
-                g2d.fillRect(0, 0, w, h);
-            }
-        };
+        initializeUI();
+    }
+    
+    private void initializeUI() {
+        // Panel principal avec un motif damier
+        contentPane = createCheckerboardPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
         
-        // Panel d'en-tête
+        // Panel d'en-tête avec logo du jeu de dames
         headerPanel = new JPanel();
         headerPanel.setOpaque(false);
-        headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        headerPanel.setBorder(new EmptyBorder(20, 0, 20, 0));
+        headerPanel.setLayout(new BorderLayout());
+        headerPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         
-        logoLabel = new JLabel("CONNEXION", JLabel.CENTER);
-        logoLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        logoLabel.setForeground(new Color(245, 245, 220)); // Beige clair
-        headerPanel.add(logoLabel);
+        // Icône du jeu
+        gameIconLabel = new JLabel(createCheckerIcon());
+        gameIconLabel.setHorizontalAlignment(JLabel.CENTER);
+        headerPanel.add(gameIconLabel, BorderLayout.WEST);
+        
+        // Titre
+        logoLabel = new JLabel("JEU DE DAMES", JLabel.CENTER);
+        logoLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        logoLabel.setForeground(LIGHT_SQUARE);
+        headerPanel.add(logoLabel, BorderLayout.CENTER);
+        
+        // Sous-titre
+        JLabel subtitleLabel = new JLabel("CONNEXION", JLabel.CENTER);
+        subtitleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        subtitleLabel.setForeground(RED_PIECE);
+        headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
+        
         contentPane.add(headerPanel, BorderLayout.NORTH);
         
-        // Panel central pour les champs de formulaire
+        // Panel central avec fond translucide pour les champs de formulaire
         JPanel formPanel = new JPanel();
-        formPanel.setOpaque(false);
         formPanel.setLayout(new GridBagLayout());
+        formPanel.setBackground(new Color(30, 30, 30, 200));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(10, 15, 10, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
         // Style commun pour les labels
-        Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
-        Color labelColor = new Color(245, 245, 220); // Beige clair
+        Font labelFont = new Font("Arial", Font.BOLD, 14);
         
         // Champ email
         lblAdrMail = new JLabel("Adresse mail : ");
         lblAdrMail.setFont(labelFont);
-        lblAdrMail.setForeground(labelColor);
+        lblAdrMail.setForeground(LIGHT_SQUARE);
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(lblAdrMail, gbc);
@@ -86,7 +106,7 @@ public class AuthFrame extends JFrame {
         // Champ mot de passe
         lblMotDePasse = new JLabel("Mot de passe :");
         lblMotDePasse.setFont(labelFont);
-        lblMotDePasse.setForeground(labelColor);
+        lblMotDePasse.setForeground(LIGHT_SQUARE);
         gbc.gridx = 0;
         gbc.gridy = 1;
         formPanel.add(lblMotDePasse, gbc);
@@ -97,37 +117,92 @@ public class AuthFrame extends JFrame {
         gbc.gridy = 1;
         formPanel.add(passwordField, gbc);
         
-        contentPane.add(formPanel, BorderLayout.CENTER);
+        // Panel pour centrer le formulaire
+        JPanel centerWrapperPanel = new JPanel(new GridBagLayout());
+        centerWrapperPanel.setOpaque(false);
+        centerWrapperPanel.add(formPanel);
+        contentPane.add(centerWrapperPanel, BorderLayout.CENTER);
         
         // Panel des boutons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
+        buttonPanel.setBorder(new EmptyBorder(0, 0, 30, 0));
         
-        btnInscrire = createStyledButton("S'inscrire", new Color(139, 69, 19)); // Brun
+        btnInscrire = createStyledButton("S'inscrire", GRAY_PIECE);
         buttonPanel.add(btnInscrire);
         
-        btnLogin = createStyledButton("Login", new Color(70, 130, 180)); // Bleu acier
+        btnLogin = createStyledButton("Connexion", RED_PIECE);
         buttonPanel.add(btnLogin);
         
-        btnQuitter = createStyledButton("Quitter", new Color(178, 34, 34)); // Rouge brique
+        btnQuitter = createStyledButton("Quitter", DARK_SQUARE);
         buttonPanel.add(btnQuitter);
         
         contentPane.add(buttonPanel, BorderLayout.SOUTH);
-        
-        // Animation subtile pour le logo
-        animateLogo();
     }
-    public JPasswordField getPasswordField() { return passwordField; }
+    
+    private JPanel createCheckerboardPanel() {
+        return new JPanel() {
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 
+			@Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                
+                int squareSize = 70;
+                int width = getWidth();
+                int height = getHeight();
+                
+                // Dessiner le damier
+                for (int i = 0; i < width / squareSize + 1; i++) {
+                    for (int j = 0; j < height / squareSize + 1; j++) {
+                        if ((i + j) % 2 == 0) {
+                            g2d.setColor(DARK_SQUARE);
+                        } else {
+                            g2d.setColor(LIGHT_SQUARE);
+                        }
+                        g2d.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
+                    }
+                }
+                
+                // Effet de transparence pour la lisibilité
+                g2d.setColor(new Color(0, 0, 0, 100));
+                g2d.fillRect(0, 0, width, height);
+            }
+        };
+    }
+    
+    private ImageIcon createCheckerIcon() {
+        // Création d'une icône représentant un pion du jeu de dames
+        BufferedImage icon = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = icon.createGraphics();
+        
+        // Dessin du carré noir
+        g2d.setColor(DARK_SQUARE);
+        g2d.fillRect(0, 0, 32, 32);
+        
+        // Dessin du pion rouge
+        g2d.setColor(RED_PIECE);
+        g2d.fillOval(4, 4, 24, 24);
+        
+        // Effet 3D
+        g2d.setColor(new Color(255, 255, 255, 100));
+        g2d.fillOval(8, 8, 10, 10);
+        
+        g2d.dispose();
+        return new ImageIcon(icon);
+    }
     
     private void styleTextField(JTextField field) {
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        field.setBackground(new Color(245, 245, 245)); // Blanc cassé
-        field.setForeground(new Color(50, 50, 50)); // Noir
+        field.setFont(new Font("Arial", Font.PLAIN, 14));
+        field.setBackground(LIGHT_SQUARE);
+        field.setForeground(DARK_SQUARE);
         field.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(205, 133, 63), 2), // Beige doré
+            BorderFactory.createLineBorder(DARK_SQUARE, 2),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         
@@ -135,13 +210,13 @@ public class AuthFrame extends JFrame {
         field.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(255, 215, 0), 2), // Or
+                    BorderFactory.createLineBorder(GOLD_ACCENT, 2),
                     BorderFactory.createEmptyBorder(5, 10, 5, 10)
                 ));
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(205, 133, 63), 2), // Beige doré
+                    BorderFactory.createLineBorder(DARK_SQUARE, 2),
                     BorderFactory.createEmptyBorder(5, 10, 5, 10)
                 ));
             }
@@ -150,7 +225,7 @@ public class AuthFrame extends JFrame {
     
     private JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setForeground(Color.WHITE);
         button.setBackground(bgColor);
         button.setFocusPainted(false);
@@ -163,8 +238,8 @@ public class AuthFrame extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(bgColor.brighter());
                 button.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(Color.WHITE, 1),
-                    BorderFactory.createEmptyBorder(9, 24, 9, 24)
+                    BorderFactory.createLineBorder(GOLD_ACCENT, 2),
+                    BorderFactory.createEmptyBorder(8, 23, 8, 23)
                 ));
             }
             
@@ -177,22 +252,11 @@ public class AuthFrame extends JFrame {
         
         return button;
     }
-    
-    private void animateLogo() {
-        Timer timer = new Timer(3000, e -> {
-            float[] fractions = {0f, 0.5f, 1f};
-            Color[] colors = {
-                new Color(245, 245, 220), // Beige clair
-                new Color(255, 215, 0),   // Or
-                new Color(245, 245, 220)  // Beige clair
-            };
-            
-            AnimationUtils.animateTextColor(logoLabel, fractions, colors, 1500);
-        });
-        timer.setRepeats(true);
-        timer.start();
-    }
 
+    public JPasswordField getPasswordField() {
+        return passwordField;
+    }
+    
     public String getEmail() {
         return emailField.getText();
     }
@@ -215,95 +279,5 @@ public class AuthFrame extends JFrame {
 
     public void showMessage(String message, String titre, int type) {
         JOptionPane.showMessageDialog(this, message, titre, type);
-    }
-}
-
-class AnimationUtils {
-    // Déclaration de la classe LongHolder en tant que classe interne statique
-    private static class LongHolder {
-        long value;
-        
-        LongHolder(long value) {
-            this.value = value;
-        }
-    }
-
-    public static void animateTextColor(JLabel label, float[] fractions, Color[] colors, int duration) {
-        Timer colorTimer = new Timer(50, null);
-        LongHolder startTimeHolder = new LongHolder(-1);
-        
-        colorTimer.addActionListener(e -> {
-            if (startTimeHolder.value < 0) {
-                startTimeHolder.value = System.currentTimeMillis();
-            }
-            
-            long currentTime = System.currentTimeMillis();
-            float progress = (currentTime - startTimeHolder.value) / (float) duration;
-            
-            if (progress > 1f) {
-                progress = 1f;
-                colorTimer.stop();
-            }
-            
-            Color color = getGradientColor(progress, fractions, colors);
-            label.setForeground(color);
-        });
-        
-        colorTimer.start();
-    }
-    
-    private static Color getGradientColor(float progress, float[] fractions, Color[] colors) {
-        if (fractions == null) {
-            throw new IllegalArgumentException("Fractions array must not be null");
-        }
-        if (colors == null) {
-            throw new IllegalArgumentException("Colors array must not be null");
-        }
-        if (fractions.length != colors.length) {
-            throw new IllegalArgumentException("Fractions and colors must have equal length");
-        }
-        
-        int[] indicies = getFractionIndicies(progress, fractions);
-        
-        float[] range = new float[]{fractions[indicies[0]], fractions[indicies[1]]};
-        Color[] colorRange = new Color[]{colors[indicies[0]], colors[indicies[1]]};
-        
-        float max = range[1] - range[0];
-        float value = progress - range[0];
-        float weight = value / max;
-        
-        return blend(colorRange[0], colorRange[1], 1f - weight);
-    }
-    
-    private static int[] getFractionIndicies(float progress, float[] fractions) {
-        int[] range = new int[2];
-        
-        for (int i = 0; i < fractions.length; i++) {
-            if (fractions[i] >= progress) {
-                range[1] = i;
-                if (i == 0) {
-                    range[0] = 0;
-                } else {
-                    range[0] = i - 1;
-                }
-                break;
-            }
-        }
-        
-        return range;
-    }
-
-    private static Color blend(Color color1, Color color2, double ratio) {
-        float r = (float) ratio;
-        float ir = (float) 1.0 - r;
-        
-        float[] rgb1 = color1.getRGBColorComponents(null);
-        float[] rgb2 = color2.getRGBColorComponents(null);
-        
-        float red = rgb1[0] * r + rgb2[0] * ir;
-        float green = rgb1[1] * r + rgb2[1] * ir;
-        float blue = rgb1[2] * r + rgb2[2] * ir;
-        
-        return new Color(red, green, blue);
     }
 }
