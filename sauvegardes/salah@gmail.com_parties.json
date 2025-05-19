@@ -1519,4 +1519,511 @@
   "jeuTermine" : false,
   "emailUtilisateur" : "salah@gmail.com",
   "dateSauvegarde" : 1747697279784
+}, {
+  "id" : "b6a3d332-4cb9-437d-ab3d-fec7311d17d3",
+  "plateau" : [ [ {
+    "ligne" : 0,
+    "colonne" : 0,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 1,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 2,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 3,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 4,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 5,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 6,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 7,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 8,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 0,
+    "colonne" : 9,
+    "piece" : 2,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 1,
+    "colonne" : 0,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 1,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 2,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 3,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 4,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 5,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 6,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 7,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 8,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 1,
+    "colonne" : 9,
+    "piece" : 0,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 2,
+    "colonne" : 0,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 1,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 2,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 3,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 4,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 5,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 6,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 7,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 8,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 2,
+    "colonne" : 9,
+    "piece" : 2,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 3,
+    "colonne" : 0,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 1,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 2,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 3,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 4,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 5,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 6,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 7,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 8,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 3,
+    "colonne" : 9,
+    "piece" : 0,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 4,
+    "colonne" : 0,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 1,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 2,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 3,
+    "piece" : 2,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 4,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 5,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 6,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 7,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 8,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 4,
+    "colonne" : 9,
+    "piece" : 0,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 5,
+    "colonne" : 0,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 1,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 2,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 3,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 4,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 5,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 6,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 7,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 8,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 5,
+    "colonne" : 9,
+    "piece" : 0,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 6,
+    "colonne" : 0,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 1,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 2,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 3,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 4,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 5,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 6,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 7,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 8,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 6,
+    "colonne" : 9,
+    "piece" : 1,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 7,
+    "colonne" : 0,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 1,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 2,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 3,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 4,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 5,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 6,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 7,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 8,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 7,
+    "colonne" : 9,
+    "piece" : 0,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 8,
+    "colonne" : 0,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 1,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 2,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 3,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 4,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 5,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 6,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 7,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 8,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 8,
+    "colonne" : 9,
+    "piece" : 1,
+    "estDame" : false
+  } ], [ {
+    "ligne" : 9,
+    "colonne" : 0,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 1,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 2,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 3,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 4,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 5,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 6,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 7,
+    "piece" : 0,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 8,
+    "piece" : 1,
+    "estDame" : false
+  }, {
+    "ligne" : 9,
+    "colonne" : 9,
+    "piece" : 0,
+    "estDame" : false
+  } ] ],
+  "joueurActuel" : 1,
+  "jeuTermine" : false,
+  "emailUtilisateur" : "salah@gmail.com",
+  "dateSauvegarde" : 1747698425882
 } ]
