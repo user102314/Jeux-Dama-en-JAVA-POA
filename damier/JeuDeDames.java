@@ -648,16 +648,7 @@ public class JeuDeDames extends JFrame {
                     // Vérifier si le mouvement est valide
                     boolean estCapture = mouvement.capture != null;
                     executerMouvement(mouvement, false); // Ne pas changer de joueur automatiquement
-                    
-                     
-                 
-                    if(joueurActuel==1) {
-                    	coupsJoueur++;
-                    }
-                    else {
-                    	coupsOrdinateur++;
-                    }
-                    
+
                     
                     // Mettre à jour les scores après chaque mouvement
                     calculerScores();
@@ -741,6 +732,7 @@ public class JeuDeDames extends JFrame {
                 capture.piece = 0;
                 capture.estDame = false;
 
+
                
             }
         }
@@ -751,6 +743,8 @@ public class JeuDeDames extends JFrame {
             mouvement.capture.estDame = false;
 
             
+
+
         }
 
        
@@ -760,6 +754,7 @@ public class JeuDeDames extends JFrame {
             (destination.piece == 2 && destination.ligne == TAILLE - 1)) {
             destination.estDame = true;
         }
+
 
         // Changer de joueur uniquement si demandé
         if (changerJoueur) {
@@ -813,8 +808,10 @@ public class JeuDeDames extends JFrame {
                     int index = (int)(Math.random() * meilleureSequence.size());
                     Mouvement meilleurMouvement = meilleureSequence.get(index);
                     
+
                     coupsOrdinateur++;
                     
+
                     // Exécuter le mouvement sans changer de joueur
                     executerMouvement(meilleurMouvement, false);
                     
@@ -829,7 +826,11 @@ public class JeuDeDames extends JFrame {
                         continuerTour = true;
                         repaint();
                         try {
+
                             Thread.sleep(4500); // Pause courte entre les captures
+
+                            Thread.sleep(500); // Pause courte entre les captures
+
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -851,7 +852,7 @@ public class JeuDeDames extends JFrame {
                 
                 if (!mouvementsNormaux.isEmpty()) {
                     int index = (int)(Math.random() * mouvementsNormaux.size());
-                    
+
                     executerMouvement(mouvementsNormaux.get(index), false);
                 } else {
                     // L'ordinateur ne peut pas jouer
@@ -1086,5 +1087,13 @@ private int calculerNombreCaptures(Mouvement mouvement) {
 
     
 
-   
+
+    // Point d'entrée du programme
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JeuDeDames jeu = new JeuDeDames();
+            jeu.setVisible(true);
+        });
+    }
 }
+
